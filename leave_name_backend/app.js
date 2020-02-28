@@ -1,16 +1,20 @@
 var express = require('express');
 var app = express();
 
+// To use the environment variables
 require('dotenv').config();
 
-var usersRoute = require("./routes/user");
-app.use('/user', usersRoute);
+/* -------------- Requiring the routes ----------------- */
+var userRoute = require("./routes/user");
+app.use('/user', userRoute);
 
-var teamsRoute = require("./routes/team");
-app.use('/team', teamsRoute);
+var teamRoute = require("./routes/team");
+app.use('/team', teamRoute);
 
-var user_teamRoute = require("./routes/user_team");
-app.use('/user_team', user_teamRoute);
+var eventRoute = require("./routes/event");
+app.use('/event', eventRoute);
+
+/* ----------------------------------------------------- */
 
 app.get('/', function (req, res) {
   res.send('僕は任天堂スイッチのサーバー。\n僕は強い！！！');

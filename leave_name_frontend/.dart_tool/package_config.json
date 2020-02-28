@@ -74,6 +74,18 @@
       "languageVersion": "2.0"
     },
     {
+      "name": "http",
+      "rootUri": "file:///Users/owenkwan/Development/flutter/.pub-cache/hosted/pub.dartlang.org/http-0.12.0+4",
+      "packageUri": "lib/",
+      "languageVersion": "2.4"
+    },
+    {
+      "name": "http_parser",
+      "rootUri": "file:///Users/owenkwan/Development/flutter/.pub-cache/hosted/pub.dartlang.org/http_parser-3.1.3",
+      "packageUri": "lib/",
+      "languageVersion": "2.0"
+    },
+    {
       "name": "image",
       "rootUri": "file:///Users/owenkwan/Development/flutter/.pub-cache/hosted/pub.dartlang.org/image-2.1.4",
       "packageUri": "lib/",
@@ -188,7 +200,7 @@
       "languageVersion": "2.3"
     }
   ],
-  "generated": "2020-02-17T20:15:04.226468Z",
+  "generated": "2020-02-24T22:27:26.482664Z",
   "generator": "pub",
   "generatorVersion": "2.7.0"
 }

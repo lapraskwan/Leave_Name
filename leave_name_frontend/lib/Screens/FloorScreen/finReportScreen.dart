@@ -80,7 +80,7 @@ class FinReportScreen extends StatelessWidget {
                         child: ClipOval(
                           child: Image(
                             fit: BoxFit.cover,
-                            image: AssetImage(_currentList[index].proPic),
+                            image: AssetImage(_currentList[index].profilePic),
                           ),
                         ),
                       ),
@@ -158,7 +158,7 @@ List<User> _currentList = [
       hallYear: 3,
       academicYear: 4,
       curriculum: 'BEng(CS)',
-      proPic: 'assets/images/AugSep.JPG'),
+      profilePic: 'assets/images/AugSep.JPG'),
   User(
       floorName: 'OP',
       floor: 8,
@@ -166,7 +166,7 @@ List<User> _currentList = [
       hallYear: 3,
       academicYear: 4,
       curriculum: 'BEng(CS)',
-      proPic: 'assets/images/AugSep.JPG'),
+      profilePic: 'assets/images/AugSep.JPG'),
 ];
 
 List<Transaction> _transactionList = [

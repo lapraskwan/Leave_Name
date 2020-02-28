@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 
 import './Screens/Homescreen/homescreen.dart';
 import './Screens/FloorScreen/floorScreen.dart';
-import './Screens/TeamScreen/teamScreen.dart';
+import './Screens/TeamScreen/myTeamsScreen.dart';
 
 // Define the drawer item
 class DrawerItem {
@@ -248,7 +248,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
       action: (BuildContext context, GlobalKey<NavigatorState> key) {
         key.currentState.push(
           MaterialPageRoute(
-            builder: (context) => TeamScreen(),
+            builder: (context) => MyTeamsScreen(),
           ),
         );
         Navigator.pop(context);

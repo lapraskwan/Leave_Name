@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class EventPosters extends StatefulWidget {
   @override
@@ -9,13 +11,7 @@ class _EventPostersState extends State<EventPosters> {
   PageController _pageController;
 
   // Move to a model file of eventPosters later.
-  List eventPosters = [
-    'assets/images/JunJul.JPG',
-    'assets/images/AugSep.JPG',
-    'assets/images/OctNov.JPG',
-    'assets/images/DecJan.JPG',
-    'assets/images/FebMar.JPG',
-  ];
+  List _eventPosters = List<String>();
 
   @override
   void initState() {
@@ -27,9 +23,24 @@ class _EventPostersState extends State<EventPosters> {
   }
 
   @override
-  void dispose(){
+  void dispose() {
     _pageController.dispose();
     super.dispose();
+  }
+
+  Future _fetchEventPosters() async {
+    var url = "http://localhost:3000/event/getByAttr?attr=on_home_page&value=1";
+    var response = await http.get(url);
+    if (response.statusCode == 200) {
+      var _homeEventJson = json.decode(response.body);
+      _eventPosters = List<String>(); // Empty the list
+      _homeEventJson.forEach((event) {
+        _eventPosters.add(event['poster']);
+      });
+      return response;
+    } else {
+      throw Exception("Failed to load users");
+    }
   }
 
   _eventPosterSelector(int index) {
@@ -37,15 +48,15 @@ class _EventPostersState extends State<EventPosters> {
       animation: _pageController,
       builder: (BuildContext context, Widget widget) {
         double value;
-        if (index == _pageController.initialPage){
+        if (index == _pageController.initialPage) {
           value = 1;
-        }
-        else{
+        } else {
           value = 0.75;
         }
         if (_pageController.position.haveDimensions) {
           value = _pageController.page - index;
-          value = (1 - (value.abs() * 0.25)).clamp(0.0, 1.0); // min value == 0.75, when value.abs() == 1
+          value = (1 - (value.abs() * 0.25))
+              .clamp(0.0, 1.0); // min value == 0.75, when value.abs() == 1
           // print(value);
         }
         return Center(
@@ -72,11 +83,11 @@ class _EventPostersState extends State<EventPosters> {
                 ]),
             child: Center(
               child: Hero(
-                tag: eventPosters[index],
+                tag: _eventPosters[index],
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10.0),
                   child: Image(
-                    image: AssetImage(eventPosters[index]),
+                    image: AssetImage(_eventPosters[index]),
                     height: 220.0,
                     fit: BoxFit.cover,
                   ),
@@ -88,18 +99,28 @@ class _EventPostersState extends State<EventPosters> {
       ),
     );
   }
-  
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 280.0,
-      width: double.infinity,
-      child: PageView.builder(
-        controller: _pageController,
-        itemCount: eventPosters.length,
-        itemBuilder: (BuildContext context, int index) =>
-            _eventPosterSelector(index),
-      ),
+    return FutureBuilder(
+      future: _fetchEventPosters(),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.hasData) {
+          return Container(
+            height: 280.0,
+            width: double.infinity,
+            child: PageView.builder(
+              controller: _pageController,
+              itemCount: _eventPosters.length,
+              itemBuilder: (BuildContext context, int index) =>
+                  _eventPosterSelector(index),
+            ),
+          );
+        } else if (snapshot.hasError) {
+          return Text(snapshot.error);
+        } else
+          return CircularProgressIndicator();
+      },
     );
   }
 }

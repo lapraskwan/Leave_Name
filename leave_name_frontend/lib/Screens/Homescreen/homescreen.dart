@@ -65,12 +65,9 @@ class _HomescreenState extends State<Homescreen> {
                   ),
                 ),
               ),
-              SliverToBoxAdapter(
-                child: SizedBox(
-                  height: 500,
-                  child: UpcomingEvents(),
-                ),
-              ), // UpcomingEvents
+              SliverFillRemaining(
+                child: UpcomingEvents(),
+              ),
             ],
           )
         ],
