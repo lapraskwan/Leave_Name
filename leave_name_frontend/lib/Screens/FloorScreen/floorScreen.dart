@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import './floormatesScreen.dart';
 import './floorEventScreens.dart';
 import './finReportScreen.dart';
-import './drinkSiuScreen.dart';
+import './treatScreen.dart';
 import './gpaScreen.dart';
 
 class FloorScreen extends StatefulWidget {
@@ -19,7 +19,7 @@ class _FloorScreenState extends State<FloorScreen>
     FloormatesScreen(),
     FloorEventScreen(),
     FinReportScreen(),
-    DrinkSiuScreen(),
+    TreatScreen(),
     GpaScreen(),
   ];
 
@@ -27,7 +27,7 @@ class _FloorScreenState extends State<FloorScreen>
     'Floormates',
     'Upcoming Events',
     'Finacial Report',
-    'Drink/Siu List',
+    'Treat List',
     'GPA competition',
   ];
 

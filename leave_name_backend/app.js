@@ -14,6 +14,12 @@ app.use('/team', teamRoute);
 var eventRoute = require("./routes/event");
 app.use('/event', eventRoute);
 
+var transactionRoute = require("./routes/transaction");
+app.use('/transaction', transactionRoute);
+
+var treatRoute = require("./routes/treat");
+app.use('/treat', treatRoute);
+
 /* ----------------------------------------------------- */
 
 app.get('/', function (req, res) {

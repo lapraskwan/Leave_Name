@@ -1,27 +1,68 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-import 'package:leave_name/models/user.dart';
+import 'package:leave_name/models/transaction.dart';
 
-class Transaction {
-  DateTime dateTime;
-  String title;
-  String name;
-  double amount;
-
-  Transaction({
-    this.dateTime,
-    this.title,
-    this.name,
-    this.amount,
-  });
+class FinReportScreen extends StatefulWidget {
+  @override
+  _FinReportScreenState createState() => _FinReportScreenState();
 }
 
-class FinReportScreen extends StatelessWidget {
-  final double balance = _transactionList
-      .map((transaction) => transaction.amount)
-      .toList()
-      .reduce((a, b) => a + b);
+class _FinReportScreenState extends State<FinReportScreen> {
+  List<Transaction> _transactionList;
+  List _debtList;
+  double balance;
+
+  Future _fetchFloorTransactions(int floor) async {
+    // Fetch the transactions and calculate the balance
+    var url = "http://localhost:3000/transaction/getByAttr?attr=floor&value=" +
+        floor.toString();
+    var response = await http.get(url);
+    if (response.statusCode == 200) {
+      var _transactionsJson = json.decode(response.body);
+      _transactionList = List<Transaction>(); // Empty the list
+      _transactionsJson.forEach((transaction) {
+        // Create the list of Transaction
+        _transactionList.add(Transaction.fromJson(transaction));
+      });
+      // Calculate the balance
+      balance = _transactionList
+          .map((transaction) =>
+              transaction.status == 'Completed' ? transaction.amount : 0.0)
+          .toList()
+          .reduce((a, b) => a + b);
+      return balance;
+    } else {
+      throw Exception("Failed to load transactions.");
+    }
+  }
+
+  Future _fetchFloorDebts(int floor) async {
+    var url =
+        "http://localhost:3000/transaction/getAllUsersDebt?attr=floor&value=" +
+            floor.toString();
+    var response = await http.get(url);
+    if (response.statusCode == 200) {
+      var _debtJson = json.decode(response.body);
+      _debtList = List(); // Empty the list
+      _debtJson.forEach((debt) {
+        // Create the list of debts
+        _debtList.add(
+          {
+            'userId': debt['user_id'],
+            'floorName': debt['floor_name'],
+            'profilePic': debt['profile_pic'],
+            'totalDebt': debt['total_debt'],
+          },
+        );
+      });
+      return response;
+    } else {
+      throw Exception("Failed to load user's debts");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,49 +93,73 @@ class FinReportScreen extends StatelessWidget {
                           fontSize: 16,
                           fontWeight: FontWeight.w500),
                     ),
-                    Text(
-                      NumberFormat.currency(name: 'HKD ').format(balance),
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 32,
-                          fontWeight: FontWeight.w600),
-                    ),
+                    FutureBuilder(
+                        future: _fetchFloorTransactions(8),
+                        builder:
+                            (BuildContext context, AsyncSnapshot snapshot) {
+                          if (snapshot.hasData) {
+                            return Text(
+                              NumberFormat.currency(name: 'HKD ')
+                                  .format(balance),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 32,
+                                  fontWeight: FontWeight.w600),
+                            );
+                          } else if (snapshot.hasError) {
+                            return Text(snapshot.error);
+                          } else
+                            return CircularProgressIndicator();
+                        }),
                   ],
                 ),
               ),
             ],
           ),
-          Container(
-            height: 120,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: _currentList.length,
-              itemBuilder: (BuildContext context, index) {
-                return Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(10, 10, 10, 5),
-                      child: SizedBox(
-                        height: 75,
-                        width: 75,
-                        child: ClipOval(
-                          child: Image(
-                            fit: BoxFit.cover,
-                            image: AssetImage(_currentList[index].profilePic),
+          FutureBuilder(
+            future: _fetchFloorDebts(8),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (snapshot.hasData) {
+                return Container(
+                  height: 120,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: _debtList.length,
+                    itemBuilder: (BuildContext context, index) {
+                      return Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(10, 10, 10, 5),
+                            child: SizedBox(
+                              height: 75,
+                              width: 75,
+                              child: ClipOval(
+                                child: Image(
+                                  fit: BoxFit.cover,
+                                  image: AssetImage(
+                                      _debtList[index]['profilePic']),
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
-                    Text(
-                      _currentList[index].floorName + ' -600.0',
-                      style: TextStyle(
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                  ],
+                          Text(
+                            _debtList[index]['floorName'] +
+                                ' ' +
+                                _debtList[index]['totalDebt'].toString(),
+                            style: TextStyle(
+                              color: Colors.grey[700],
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
                 );
-              },
-            ),
+              } else if (snapshot.hasError) {
+                return Text(snapshot.error);
+              } else
+                return CircularProgressIndicator();
+            },
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(10, 5, 0, 0),
@@ -105,83 +170,59 @@ class FinReportScreen extends StatelessWidget {
               ),
             ),
           ),
-          Expanded(
-            child: SingleChildScrollView(
-              child: DataTable(
-                  columnSpacing: 40,
-                  columns: [
-                    DataColumn(
-                      label: Text('Date'),
-                    ),
-                    DataColumn(
-                      label: Text('Title'),
-                    ),
-                    DataColumn(
-                      label: Text('Name'),
-                    ),
-                    DataColumn(
-                      label: Text('Amount'),
-                    ),
-                  ],
-                  rows: _transactionList.map(
-                    (Transaction transaction) {
-                      return DataRow(cells: [
-                        DataCell(
-                          Text(
-                              transaction.dateTime.toString().substring(0, 10)),
-                        ),
-                        DataCell(
-                          Text(transaction.title),
-                        ),
-                        DataCell(
-                          Text(transaction.name),
-                        ),
-                        DataCell(
-                          Text(transaction.amount.toString()),
-                        ),
-                      ]);
-                    },
-                  ).toList()),
-            ),
+          FutureBuilder(
+            future: _fetchFloorTransactions(8),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (snapshot.hasData) {
+                return Expanded(
+                  child: SingleChildScrollView(
+                    child: DataTable(
+                        columnSpacing: 40,
+                        columns: [
+                          
+                          DataColumn(
+                            label: Text('Title'),
+                          ),
+                          DataColumn(
+                            label: Text('Name'),
+                          ),
+                          DataColumn(
+                            label: Text('Status'),
+                          ),
+                          DataColumn(
+                            label: Text('Amount'),
+                          ),
+                        ],
+                        rows: _transactionList.map(
+                          (Transaction transaction) {
+                            return DataRow(
+                              cells: [
+                                DataCell(
+                                  Text(transaction.title),
+                                ),
+                                DataCell(
+                                  Text(transaction.floorName),
+                                ),
+                                DataCell(
+                                  Text(transaction.status),
+                                ),
+                                DataCell(
+                                  Text(transaction.amount.toString()),
+                                ),
+                              ],
+                            );
+                          },
+                        ).toList()),
+                  ),
+                );
+              } else if (snapshot.hasError) {
+                return Text(snapshot.error);
+              } else
+                return CircularProgressIndicator();
+            },
           ),
         ],
       ),
     );
   }
 }
-
-List<User> _currentList = [
-  User(
-      floorName: 'op',
-      floor: 8,
-      room: '807',
-      hallYear: 3,
-      academicYear: 4,
-      curriculum: 'BEng(CS)',
-      profilePic: 'assets/images/AugSep.JPG'),
-  User(
-      floorName: 'OP',
-      floor: 8,
-      room: '812A',
-      hallYear: 3,
-      academicYear: 4,
-      curriculum: 'BEng(CS)',
-      profilePic: 'assets/images/AugSep.JPG'),
-];
-
-List<Transaction> _transactionList = [
-  Transaction(
-      dateTime: DateTime.now(), title: 'Floor fee', name: 'Op', amount: 888),
-  Transaction(dateTime: DateTime.now(), title: 'Siu', name: 'Op', amount: 888),
-  Transaction(dateTime: DateTime.now(), title: 'Siu', name: 'Op', amount: -888),
-  Transaction(dateTime: DateTime.now(), title: 'Siu', name: 'Op', amount: 888),
-  Transaction(dateTime: DateTime.now(), title: 'Siu', name: 'Op', amount: 888),
-  Transaction(dateTime: DateTime.now(), title: 'Siu', name: 'Op', amount: 888),
-  Transaction(dateTime: DateTime.now(), title: 'Siu', name: 'Op', amount: 888),
-  Transaction(dateTime: DateTime.now(), title: 'Siu', name: 'Op', amount: 888),
-  Transaction(dateTime: DateTime.now(), title: 'Siu', name: 'Op', amount: -888),
-  Transaction(dateTime: DateTime.now(), title: 'Siu', name: 'Op', amount: 888),
-  Transaction(dateTime: DateTime.now(), title: 'Siu', name: 'Op', amount: 888),
-  Transaction(dateTime: DateTime.now(), title: 'Siu', name: 'Op', amount: 888),
-  Transaction(dateTime: DateTime.now(), title: 'Siu', name: 'Op', amount: 888),
-];

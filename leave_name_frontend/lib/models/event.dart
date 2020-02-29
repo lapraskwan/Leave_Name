@@ -8,6 +8,7 @@ class Event {
   DateTime endTime;
   String dressCode;
   String description;
+  int onHomePage;
 
   Event({
     this.eventId,
@@ -19,6 +20,7 @@ class Event {
     this.endTime,
     this.dressCode,
     this.description,
+    this.onHomePage,
   });
 
   Event.fromJson(Map<String, dynamic> json)
@@ -30,7 +32,8 @@ class Event {
         startTime = DateTime.parse(json['start_time']),
         endTime = DateTime.parse(json['end_time']),
         dressCode = json['dressCode'],
-        description = json['description'];
+        description = json['description'],
+        onHomePage = json['on_home_page'];
 }
 
 class FloorEvent extends Event {
@@ -47,6 +50,7 @@ class FloorEvent extends Event {
     endTime,
     dressCode,
     description,
+    onHomePage
   }) : super(
           eventId: eventId,
           title: title,
@@ -57,6 +61,7 @@ class FloorEvent extends Event {
           endTime: endTime,
           dressCode: dressCode,
           description: description,
+          onHomePage: onHomePage,
         );
 
   FloorEvent.fromJson(Map<String, dynamic> json)
@@ -78,6 +83,7 @@ class TeamEvent extends Event {
     endTime,
     dressCode,
     description,
+    onHomePage,
   }) : super(
           eventId: eventId,
           title: title,
@@ -88,6 +94,7 @@ class TeamEvent extends Event {
           endTime: endTime,
           dressCode: dressCode,
           description: description,
+          onHomePage: onHomePage,
         );
 
   TeamEvent.fromJson(Map<String, dynamic> json)
@@ -111,6 +118,7 @@ class InterhallEvent extends Event {
     endTime,
     dressCode,
     description,
+    onHomePage,
   }) : super(
           eventId: eventId,
           title: title,
@@ -121,6 +129,7 @@ class InterhallEvent extends Event {
           endTime: endTime,
           dressCode: dressCode,
           description: description,
+          onHomePage: onHomePage,
         );
 
   InterhallEvent.fromJson(Map<String, dynamic> json)
