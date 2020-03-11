@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:leave_name/Screens/TeamScreen/teamDetail.dart';
+import 'package:leave_name/Screens/TeamScreen/notJoinedTeamsScreen.dart';
 import 'package:leave_name/models/team.dart';
 import './teamDetail.dart';
 
@@ -64,10 +65,15 @@ class _MyTeamsScreenState extends State<MyTeamsScreen> {
                       ),
                     ),
                     child: Text(
-                      'Add +',
+                      'Join +',
                       style: TextStyle(fontSize: 18),
                     ),
-                    onPressed: () => {},
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => NotJoinedTeamsScreen(),
+                      ),
+                    ),
                   ),
                 ],
               ),

@@ -30,7 +30,7 @@ exports.getAll = async function (orderBy) {
 exports.getByAttr = async function (attr, value, orderBy) {
     if (orderBy === undefined) {
         var result = await query(
-            `SELECT event.*, floor_event.floor, team_event.team_id, interhall_event.stage, interhall_event.opponent
+            `SELECT event.*, floor_event.floor, team_event.team_id, interhall_event.stage, interhall_event.opponent, interhall_event.team
             FROM event
             LEFT OUTER JOIN floor_event ON event.event_id = floor_event.event_id
             LEFT OUTER JOIN team_event ON event.event_id = team_event.event_id
@@ -40,7 +40,7 @@ exports.getByAttr = async function (attr, value, orderBy) {
     }
     else {
         var result = await query(
-            `SELECT event.*, floor_event.floor, team_event.team_id, interhall_event.stage, interhall_event.opponent 
+            `SELECT event.*, floor_event.floor, team_event.team_id, interhall_event.stage, interhall_event.opponent, interhall_event.team
             FROM event
             LEFT OUTER JOIN floor_event ON event.event_id = floor_event.event_id
             LEFT OUTER JOIN team_event ON event.event_id = team_event.event_id
@@ -58,7 +58,7 @@ exports.getByUser = async function (user_id, orderBy) {
     // 3. Get the hall events and interhall events
     if (orderBy === undefined) {
         var result = await query(
-            `SELECT event.*, floor_event.floor, team_event.team_id, interhall_event.stage, interhall_event.opponent
+            `SELECT event.*, floor_event.floor, team_event.team_id, interhall_event.stage, interhall_event.opponent, interhall_event.team
             FROM event
             LEFT OUTER JOIN floor_event ON event.event_id = floor_event.event_id
             LEFT OUTER JOIN team_event ON event.event_id = team_event.event_id
@@ -73,7 +73,7 @@ exports.getByUser = async function (user_id, orderBy) {
     }
     else {
         var result = await query(
-            `SELECT event.*, floor_event.floor, team_event.team_id, interhall_event.stage, interhall_event.opponent
+            `SELECT event.*, floor_event.floor, team_event.team_id, interhall_event.stage, interhall_event.opponent, interhall_event.team
             FROM event
             LEFT OUTER JOIN floor_event ON event.event_id = floor_event.event_id
             LEFT OUTER JOIN team_event ON event.event_id = team_event.event_id

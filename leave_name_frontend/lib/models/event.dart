@@ -105,10 +105,12 @@ class TeamEvent extends Event {
 class InterhallEvent extends Event {
   String opponent;
   String stage;
+  String team;
 
   InterhallEvent(
     String opponent,
-    String stage, {
+    String stage, 
+    String team, {
     eventId,
     title,
     type,
@@ -135,5 +137,6 @@ class InterhallEvent extends Event {
   InterhallEvent.fromJson(Map<String, dynamic> json)
       : stage = json['stage'],
         opponent = json['opponent'],
+        team = json['team'],
         super.fromJson(json);
 }

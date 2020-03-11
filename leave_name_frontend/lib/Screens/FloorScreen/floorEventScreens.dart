@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:leave_name/models/event.dart';
+import 'package:leave_name/Screens/EventScreen/eventScreen.dart';
 
 class FloorEventScreen extends StatefulWidget {
   @override
@@ -45,107 +46,116 @@ class _FloorEventScreenState extends State<FloorEventScreen> {
               child: ListView.builder(
                 itemCount: _floorEventList.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return Stack(
-                    children: <Widget>[
-                      Container(
-                        margin: EdgeInsets.only(left: 40, right: 20, top: 20),
-                        height: 180,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20.0),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black26,
-                              offset: Offset(0.0, 4.0),
-                              blurRadius: 10.0,
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          children: <Widget>[
-                            Padding(
-                              padding: EdgeInsets.only(top: 20),
-                              child: Row(
-                                children: <Widget>[
-                                  Expanded(
-                                    flex: 1,
-                                    child: Container(),
-                                  ),
-                                  Expanded(
-                                    flex: 2,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Text(
-                                          _floorEventList[index].title,
-                                          style: TextStyle(fontSize: 20),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.fromLTRB(
-                                              0, 5.0, 0, 0),
-                                          child: Text(_toCustomDateMonth(
-                                              _floorEventList[index]
-                                                  .startTime)),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.fromLTRB(
-                                              0, 5.0, 0, 0),
-                                          child: Text(DateFormat.Hm().format(
-                                                  _floorEventList[index]
-                                                      .startTime) +
-                                              ' @ ' +
-                                              _floorEventList[index].venue),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.fromLTRB(
-                                              0, 5.0, 0, 0),
-                                          child: SizedBox(
-                                            height: 20,
-                                            child: Text(_floorEventList[index]
-                                                .description),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              child: ButtonBar(
-                                buttonPadding:
-                                    EdgeInsets.only(right: 20, bottom: 5),
-                                children: <Widget>[
-                                  FlatButton(
-                                    onPressed: () {},
-                                    child: Text('Go!'),
-                                  ),
-                                  FlatButton(
-                                    onPressed: () {},
-                                    child: Text('Next Time...'),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
+                  return InkWell(
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            EventScreen(_floorEventList[index].eventId),
                       ),
-                      Positioned(
-                        top: 40.0,
-                        left: 20.0,
-                        width: 100.0,
-                        height: 100.0,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10.0),
-                          child: Image(
-                            fit: BoxFit.cover,
-                            image: AssetImage(_floorEventList[index].poster),
+                    ),
+                    child: Stack(
+                      children: <Widget>[
+                        Container(
+                          margin: EdgeInsets.only(left: 40, right: 20, top: 20),
+                          height: 180,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black26,
+                                offset: Offset(0.0, 4.0),
+                                blurRadius: 10.0,
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            children: <Widget>[
+                              Padding(
+                                padding: EdgeInsets.only(top: 20),
+                                child: Row(
+                                  children: <Widget>[
+                                    Expanded(
+                                      flex: 1,
+                                      child: Container(),
+                                    ),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Text(
+                                            _floorEventList[index].title,
+                                            style: TextStyle(fontSize: 20),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                0, 5.0, 0, 0),
+                                            child: Text(_toCustomDateMonth(
+                                                _floorEventList[index]
+                                                    .startTime)),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                0, 5.0, 0, 0),
+                                            child: Text(DateFormat.Hm().format(
+                                                    _floorEventList[index]
+                                                        .startTime) +
+                                                ' @ ' +
+                                                _floorEventList[index].venue),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                0, 5.0, 0, 0),
+                                            child: SizedBox(
+                                              height: 20,
+                                              child: Text(_floorEventList[index]
+                                                  .description),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                child: ButtonBar(
+                                  buttonPadding:
+                                      EdgeInsets.only(right: 20, bottom: 5),
+                                  children: <Widget>[
+                                    FlatButton(
+                                      onPressed: () {},
+                                      child: Text('Go!'),
+                                    ),
+                                    FlatButton(
+                                      onPressed: () {},
+                                      child: Text('Next Time...'),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ),
-                    ],
+                        Positioned(
+                          top: 40.0,
+                          left: 20.0,
+                          width: 100.0,
+                          height: 100.0,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10.0),
+                            child: Image(
+                              fit: BoxFit.cover,
+                              image: AssetImage(_floorEventList[index].poster),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   );
                 },
               ),

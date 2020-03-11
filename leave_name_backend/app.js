@@ -20,6 +20,9 @@ app.use('/transaction', transactionRoute);
 var treatRoute = require("./routes/treat");
 app.use('/treat', treatRoute);
 
+var floorRoute = require("./routes/floor");
+app.use('/floor', floorRoute);
+
 /* ----------------------------------------------------- */
 
 app.get('/', function (req, res) {

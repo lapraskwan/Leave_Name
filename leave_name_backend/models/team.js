@@ -66,6 +66,31 @@ exports.getTeamsOfUser = async function(user_id, orderBy){
     return result;
 }
 
+exports.getTeamsNotJoinedByUser = async function(user_id, orderBy){
+    if (orderBy === undefined){
+        var result = await query(
+            `SELECT team.* 
+            FROM user_in_team, team
+            WHERE user_in_team.team_id = team.team_id
+            AND user_in_team.team_id NOT IN (SELECT DISTINCT user_in_team.team_id
+                                             FROM user_in_team
+                                             WHERE user_in_team.user_id = ${user_id})`
+            );
+    }
+    else {
+        var result = await query(
+            `SELECT team.* 
+            FROM user_in_team, team
+            WHERE user_in_team.team_id = team.team_id
+            AND user_in_team.team_id NOT IN (SELECT DISTINCT user_in_team.team_id
+                                             FROM user_in_team
+                                             WHERE user_in_team.user_id = ${user_id})
+            ORDER BY ${orderBy}`
+            );
+    }
+    return result;
+}
+
 exports.getUsersInTeam = async function(team_id, orderBy){
     if (orderBy === undefined){
         var result = await query(

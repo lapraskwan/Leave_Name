@@ -30,6 +30,13 @@ router.get("/getTeamsOfUser/:user_id", (req, res) => {
     });
 });
 
+// Get all teams not joined by a user
+router.get("/getTeamsNotJoinedByUser/:user_id", (req, res) => {
+    team.getTeamsNotJoinedByUser(req.params.user_id, req.query.orderBy).then((result) => {
+        res.json(result);
+    });
+});
+
 // Get all users in a team
 router.get("/getUsersInTeam/:team_id", (req, res) => {
     team.getUsersInTeam(req.params.team_id, req.query.orderBy).then((result) => {

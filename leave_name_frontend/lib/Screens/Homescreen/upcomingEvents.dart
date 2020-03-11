@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:intl/intl.dart';
 
 import 'package:leave_name/models/event.dart';
+import 'package:leave_name/Screens/EventScreen/eventScreen.dart';
 
 String _toCustomDateMonth(DateTime dateTime) {
   return dateTime.day.toString() +
@@ -35,11 +36,11 @@ class _UpcomingEventsState extends State<UpcomingEvents> {
       _upcomingEventList = List<Event>(); // Empty the list
       _userEventJson.forEach((event) {
         // Create the list of Event
-        if (event['floor'] != Null) {
+        if (event['floor'] != null) {
           _upcomingEventList.add(FloorEvent.fromJson(event));
-        } else if (event['team_id'] != Null) {
+        } else if (event['team_id'] != null) {
           _upcomingEventList.add(TeamEvent.fromJson(event));
-        } else if (event['stage'] != Null) {
+        } else if (event['stage'] != null) {
           // Interhall aquatics and athletics may not have specific opponents
           _upcomingEventList.add(InterhallEvent.fromJson(event));
         } else {
@@ -49,7 +50,7 @@ class _UpcomingEventsState extends State<UpcomingEvents> {
       });
       return response;
     } else {
-      throw Exception("Failed to load users");
+      throw Exception("Failed to load user events");
     }
   }
 
@@ -64,114 +65,139 @@ class _UpcomingEventsState extends State<UpcomingEvents> {
             child: ListView.builder(
               itemCount: _upcomingEventList.length,
               itemBuilder: (BuildContext context, int index) {
-                return Stack(
-                  children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.only(left: 40, right: 20, top: 20),
-                      height: 180,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20.0),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black26,
-                            offset: Offset(0.0, 4.0),
-                            blurRadius: 10.0,
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.only(top: 20),
-                            child: Row(
-                              children: <Widget>[
-                                Expanded(
-                                  flex: 1,
-                                  child: Container(),
-                                ),
-                                Expanded(
-                                  flex: 2,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      Padding(
-                                        padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-                                        child: Text(
-                                          _upcomingEventList[index].title,
-                                          style: TextStyle(fontSize: 20),
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.fromLTRB(
-                                            0, 5.0, 0, 0),
-                                        child: Text(
-                                          _toCustomDateMonth(
-                                              _upcomingEventList[index]
-                                                  .startTime),
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.fromLTRB(
-                                            0, 5.0, 0, 0),
-                                        child: Text(
-                                          DateFormat.Hm().format(
-                                                  _upcomingEventList[index]
-                                                      .startTime) +
-                                              ' @ ' +
-                                              _upcomingEventList[index].venue,
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.fromLTRB(
-                                            0, 5.0, 0, 0),
-                                        child: SizedBox(
-                                          height: 20,
-                                                                                  child: Text(_upcomingEventList[index]
-                                              .description),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Expanded(
-                            child: ButtonBar(
-                              buttonPadding:
-                                  EdgeInsets.only(right: 20, bottom: 5),
-                              children: <Widget>[
-                                FlatButton(
-                                  onPressed: () {},
-                                  child: Text('Go!'),
-                                ),
-                                FlatButton(
-                                  onPressed: () {},
-                                  child: Text('Next Time...'),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                return InkWell(
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          EventScreen(_upcomingEventList[index].eventId),
                     ),
-                    Positioned(
-                      top: 40.0,
-                      left: 20.0,
-                      width: 100.0,
-                      height: 100.0,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10.0),
-                        child: Image(
-                          fit: BoxFit.cover,
-                          image: AssetImage('assets/images/JunJul.JPG'),
+                  ),
+                  child: Stack(
+                    children: <Widget>[
+                      Container(
+                        margin: EdgeInsets.only(left: 40, right: 20, top: 20),
+                        height: 180,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black26,
+                              offset: Offset(0.0, 4.0),
+                              blurRadius: 10.0,
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.only(top: 20),
+                              child: Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    flex: 1,
+                                    child: Container(),
+                                  ),
+                                  Expanded(
+                                    flex: 2,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              0, 0, 10, 0),
+                                          child: Text(
+                                            _upcomingEventList[index].type ==
+                                                    'interhall'
+                                                ? (_upcomingEventList[index]
+                                                            as InterhallEvent)
+                                                        .team +
+                                                    ' ' +
+                                                    (_upcomingEventList[index]
+                                                            as InterhallEvent)
+                                                        .stage +
+                                                    ' vs ' +
+                                                    (_upcomingEventList[index]
+                                                            as InterhallEvent)
+                                                        .opponent
+                                                : _upcomingEventList[index]
+                                                    .title,
+                                            style: TextStyle(fontSize: 20),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              0, 5.0, 0, 0),
+                                          child: Text(
+                                            _toCustomDateMonth(
+                                                _upcomingEventList[index]
+                                                    .startTime),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              0, 5.0, 0, 0),
+                                          child: Text(
+                                            DateFormat.Hm().format(
+                                                    _upcomingEventList[index]
+                                                        .startTime) +
+                                                ' @ ' +
+                                                _upcomingEventList[index].venue,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              0, 5.0, 0, 0),
+                                          child: SizedBox(
+                                            height: 20,
+                                            child: Text(
+                                                _upcomingEventList[index]
+                                                    .description),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: ButtonBar(
+                                buttonPadding:
+                                    EdgeInsets.only(right: 20, bottom: 5),
+                                children: <Widget>[
+                                  FlatButton(
+                                    onPressed: () {},
+                                    child: Text('Go!'),
+                                  ),
+                                  FlatButton(
+                                    onPressed: () {},
+                                    child: Text('Next Time...'),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ),
-                  ],
+                      Positioned(
+                        top: 40.0,
+                        left: 20.0,
+                        width: 100.0,
+                        height: 100.0,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10.0),
+                          child: Image(
+                            fit: BoxFit.cover,
+                            image: AssetImage('assets/images/JunJul.JPG'),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 );
               },
             ),

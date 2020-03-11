@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:leave_name/Screens/EventScreen/eventScreen.dart';
+
 class EventPosters extends StatefulWidget {
   @override
   _EventPostersState createState() => _EventPostersState();
@@ -11,7 +13,8 @@ class _EventPostersState extends State<EventPosters> {
   PageController _pageController;
 
   // Move to a model file of eventPosters later.
-  List _eventPosters = List<String>();
+  List<String> _eventPosters = List<String>();
+  List<int> _eventIDs = List<int>();
 
   @override
   void initState() {
@@ -36,6 +39,7 @@ class _EventPostersState extends State<EventPosters> {
       _eventPosters = List<String>(); // Empty the list
       _homeEventJson.forEach((event) {
         _eventPosters.add(event['poster']);
+        _eventIDs.add(event['event_id']);
       });
       return response;
     } else {
@@ -68,7 +72,11 @@ class _EventPostersState extends State<EventPosters> {
         );
       },
       child: GestureDetector(
-        onTap: null, // Navigate to the Event Page of this event
+        onTap: () => Navigator.push(context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          EventScreen(_eventIDs[index]),
+                    ),), // Navigate to the Event Page of this event
         child: Center(
           child: Container(
             margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0),
